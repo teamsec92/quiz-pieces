@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiz des pièces</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+}
+
+body {
+
+    margin: 0;
+
+    background: #f2f2f7;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    color: #111;
+
+}
+
+header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
+    background: white;
+
+    padding: 14px;
+
+    box-shadow: 0 2px 8px #0002;
+
+}
+
+h1 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+}
+
+.info {
+
+    color: #666;
+
+    font-size: 14px;
+
+    margin-top: 4px;
+
+}
+
+.progress {
+
+    height: 7px;
+
+    background: #ddd;
+
+    border-radius: 10px;
+
+    margin-top: 10px;
+
+    overflow: hidden;
+
+}
+
+#bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #111;
+
+}
+
+.controls {
+
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+
+    margin-top: 10px;
+
+}
+
+button {
+
+    border: 0;
+
+    border-radius: 12px;
+
+    padding: 11px 14px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    background: #111;
+
+    color: white;
+
+}
+
+.secondary {
+
+    background: #e5e5ea;
+
+    color: #111;
+
+}
+
+#score {
+
+    margin-left: auto;
+
+    font-weight: 800;
+
+}
+
+.plan-container {
+
+    background: white;
+
+    margin: 10px;
+
+    padding: 5px;
+
+    border-radius: 16px;
+
+    overflow-x: auto;
+
+}
+
+.plan {
+
+    position: relative;
+
+    width: 100%;
+
+    min-width: 700px;
+
+}
+
+.plan img {
+
+    width: 100%;
+
+    display: block;
+
+}
+
+/* Cache la légende originale */
+
+.hide-legend {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    width: 30%;
+
+    height: 44%;
+
+    background: white;
+
+    z-index: 2;
+
+}
+
+/* Zones tactiles */
+
+.zone {
+
+    position: absolute;
+
+    z-index: 5;
+
+    border: 2px solid transparent;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,0.15);
+
+}
+
+.zone.selected {
+
+    border-color: #111;
+
+    background: rgba(255,255,255,0.5);
+
+}
+
+.zone.correct {
+
+    border-color: #16803c;
+
+}
+
+.zone.wrong {
+
+    border-color: #b00020;
+
+}
+
+.answer-panel {
+
+    position: sticky;
+
+    bottom: 0;
+
+    z-index: 15;
+
+    margin: 10px;
+
+    padding: 14px;
+
+    background: white;
+
+    border-radius: 16px;
+
+    box-shadow: 0 -2px 12px #0002;
+
+}
+
+.small {
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+.question {
+
+    font-size: 24px;
+
+    font-weight: 800;
+
+    margin: 4px 0 10px;
+
+}
+
+.answer-row {
+
+    display: flex;
+
+    gap: 8px;
+
+}
+
+input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 12px;
+
+    font-size: 18px;
+
+    border: 2px solid #aaa;
+
+    border-radius: 12px;
+
+    outline: none;
+
+}
+
+input:focus {
+
+    border-color: #111;
+
+}
+
+.feedback {
+
+    min-height: 24px;
+
+    margin-top: 7px;
+
+    font-weight: 700;
+
+}
+
+.good {
+
+    color: #16803c;
+
+}
+
+.bad {
+
+    color: #b00020;
+
+}
+
+.navigation {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 8px;
+
+}
+
+.navigation button {
+
+    flex: 1;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>🧠 Quiz des pièces</h1>
+
+    <div class="info">
+
+        Touche un numéro sur le plan, écris le nom de la pièce puis vérifie.
+
+    </div>
+
+    <div class="progress">
+
+        <div id="bar"></div>
+
+    </div>
+
+    <div class="controls">
+
+        <button onclick="verify()">✓ Vérifier</button>
+
+        <button class="secondary" onclick="resetQuiz()">Recommencer</button>
+
+        <div id="score">0 / 19</div>
+
+    </div>
+
+</header>
+
+<div class="plan-container">
+
+<div class="plan">
+
+<img src="66C6A94C-68C9-4690-91A1-472030294E35.png">
+
+<div class="hide-legend"></div>
+
+<!-- Numéros du plan -->
+
+<div class="zone" id="z1"
+
+style="left:40%;top:43%;width:12%;height:10%"
+
+onclick="selectRoom(1)"></div>
+
+<div class="zone" id="z2"
+
+style="left:3%;top:51%;width:12%;height:12%"
+
+onclick="selectRoom(2)"></div>
+
+<div class="zone" id="z3"
+
+style="left:2%;top:72%;width:12%;height:13%"
+
+onclick="selectRoom(3)"></div>
+
+<div class="zone" id="z4"
+
+style="left:9%;top:77%;width:9%;height:10%"
+
+onclick="selectRoom(4)"></div>
+
+<div class="zone" id="z5"
+
+style="left:16%;top:77%;width:9%;height:10%"
+
+onclick="selectRoom(5)"></div>
+
+<div class="zone" id="z6"
+
+style="left:23%;top:77%;width:9%;height:10%"
+
+onclick="selectRoom(6)"></div>
+
+<div class="zone" id="z7"
+
+style="left:78%;top:25%;width:15%;height:20%"
+
+onclick="selectRoom(7)"></div>
+
+<div class="zone" id="z8"
+
+style="left:62%;top:59%;width:10%;height:12%"
+
+onclick="selectRoom(8)"></div>
+
+<div class="zone" id="z9"
+
+style="left:55%;top:59%;width:10%;height:12%"
+
+onclick="selectRoom(9)"></div>
+
+<div class="zone" id="z10"
+
+style="left:48%;top:59%;width:10%;height:12%"
+
+onclick="selectRoom(10)"></div>
+
+<div class="zone" id="z11"
+
+style="left:40%;top:59%;width:10%;height:12%"
+
+onclick="selectRoom(11)"></div>
+
+<div class="zone" id="z12"
+
+style="left:33%;top:59%;width:10%;height:12%"
+
+onclick="selectRoom(12)"></div>
+
+<div class="zone" id="z13"
+
+style="left:32%;top:72%;width:9%;height:10%"
+
+onclick="selectRoom(13)"></div>
+
+<div class="zone" id="z14"
+
+style="left:43%;top:72%;width:9%;height:10%"
+
+onclick="selectRoom(14)"></div>
+
+<div class="zone" id="z15"
+
+style="left:50%;top:72%;width:10%;height:10%"
+
+onclick="selectRoom(15)"></div>
+
+<div class="zone" id="z16"
+
+style="left:59%;top:72%;width:10%;height:10%"
+
+onclick="selectRoom(16)"></div>
+
+<div class="zone" id="z17"
+
+style="left:78%;top:59%;width:17%;height:14%"
+
+onclick="selectRoom(17)"></div>
+
+<div class="zone" id="z18"
+
+style="left:78%;top:72%;width:17%;height:14%"
+
+onclick="selectRoom(18)"></div>
+
+<div class="zone" id="z19"
+
+style="left:36%;top:86%;width:35%;height:13%"
+
+onclick="selectRoom(19)"></div>
+
+</div>
+
+</div>
+
+<div class="answer-panel">
+
+<div class="small">PIÈCE À IDENTIFIER</div>
+
+<div class="question" id="question">
+
+Choisis un numéro sur le plan
+
+</div>
+
+<div class="answer-row">
+
+<input
+
+id="answer"
+
+type="text"
+
+placeholder="Écris le nom de la pièce..."
+
+autocomplete="off"
+
+autocapitalize="sentences"
+
+disabled>
+
+<button onclick="verify()">✓</button>
+
+</div>
+
+<div id="feedback" class="feedback"></div>
+
+<div class="navigation">
+
+<button class="secondary" onclick="previous()">← Précédente</button>
+
+<button onclick="next()">Suivante →</button>
+
+</div>
+
+</div>
+
+<script>
+
+const answers = {
+
+1:"Terrasse",
+
+2:"Salon d’argent",
+
+3:"Salle à manger",
+
+4:"Bibliothèque",
+
+5:"Salon des fougères",
+
+6:"Salon de la cartographie",
+
+7:"Salle des fêtes",
+
+8:"Salon Murat",
+
+9:"Salon des aides de camp",
+
+10:"Salon des ambassadeurs",
+
+11:"Salon Pompadour",
+
+12:"Salon des portraits",
+
+13:"Salon Cléopâtre",
+
+14:"Escalier Murat",
+
+15:"Vestibule d’honneur",
+
+16:"Salon des tapisseries",
+
+17:"Jardin d’hiver",
+
+18:"Salon Napoléon III",
+
+19:"Cour d’honneur"
+
+};
+
+let current = 0;
+
+let state = {};
+
+for(let i=1;i<=19;i++){
+
+    state[i] = {
+
+        value:"",
+
+        correct:false
+
+    };
+
+}
+
+function normalize(text){
+
+    return text
+
+    .toLowerCase()
+
+    .normalize("NFD")
+
+    .replace(/[\u0300-\u036f]/g,"")
+
+    .replace(/[’']/g," ")
+
+    .replace(/[^a-z0-9 ]/g,"")
+
+    .replace(/\s+/g," ")
+
+    .trim();
+
+}
+
+function selectRoom(number){
+
+    current = number;
+
+    document.querySelectorAll(".zone")
+
+    .forEach(z => z.classList.remove("selected"));
+
+    document
+
+    .getElementById("z"+number)
+
+    .classList.add("selected");
+
+    document.getElementById("question")
+
+    .textContent = "N° " + number;
+
+    const input = document.getElementById("answer");
+
+    input.disabled = false;
+
+    input.value = state[number].value;
+
+    const feedback = document.getElementById("feedback");
+
+    if(state[number].correct){
+
+        feedback.textContent = "✓ Bonne réponse !";
+
+        feedback.className = "feedback good";
+
+    }else{
+
+        feedback.textContent = "";
+
+        feedback.className = "feedback";
+
+    }
+
+    setTimeout(() => input.focus(),100);
+
+}
+
+function verify(){
+
+    if(!current) return;
+
+    const input = document.getElementById("answer");
+
+    if(!input.value.trim()){
+
+        return;
+
+    }
+
+    state[current].value = input.value;
+
+    const feedback = document.getElementById("feedback");
+
+    const zone = document.getElementById("z"+current);
+
+    if(normalize(input.value) === normalize(answers[current])){
+
+        state[current].correct = true;
+
+        zone.classList.remove("wrong");
+
+        zone.classList.add("correct");
+
+        feedback.textContent = "✓ Bonne réponse !";
+
+        feedback.className = "feedback good";
+
+    }else{
+
+        state[current].correct = false;
+
+        zone.classList.remove("correct");
+
+        zone.classList.add("wrong");
+
+        feedback.textContent = "✗ Mauvaise réponse, essaie encore !";
+
+        feedback.className = "feedback bad";
+
+    }
+
+    updateScore();
+
+}
+
+function next(){
+
+    if(current === 0){
+
+        selectRoom(1);
+
+    }else{
+
+        selectRoom(current === 19 ? 1 : current + 1);
+
+    }
+
+}
+
+function previous(){
+
+    if(current === 0){
+
+        selectRoom(19);
+
+    }else{
+
+        selectRoom(current === 1 ? 19 : current - 1);
+
+    }
+
+}
+
+function updateScore(){
+
+    let score = 0;
+
+    for(let i=1;i<=19;i++){
+
+        if(state[i].correct){
+
+            score++;
+
+        }
+
+    }
+
+    document.getElementById("score")
+
+    .textContent = score + " / 19";
+
+    document.getElementById("bar")
+
+    .style.width = (score / 19 * 100) + "%";
+
+}
+
+function resetQuiz(){
+
+    for(let i=1;i<=19;i++){
+
+        state[i] = {
+
+            value:"",
+
+            correct:false
+
+        };
+
+        document
+
+        .getElementById("z"+i)
+
+        .classList.remove("selected","correct","wrong");
+
+    }
+
+    current = 0;
+
+    document.getElementById("question")
+
+    .textContent = "Choisis un numéro sur le plan";
+
+    document.getElementById("answer").value = "";
+
+    document.getElementById("answer").disabled = true;
+
+    document.getElementById("feedback").textContent = "";
+
+    updateScore();
+
+}
+
+</script>
+
+</body>
+
+</html>
