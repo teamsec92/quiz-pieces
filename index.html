@@ -1,67 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Quiz des pièces</title>
 
 <style>
 
-/* =========================
-   BASE
-========================= */
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+    box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f2f2;
+    color: #222;
 }
 
-body{
-    margin:0;
-    background:#f2f2f7;
-    color:#111;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-    background:white;
-    text-align:center;
-    padding:12px 15px;
-    position:sticky;
-    top:0;
-    z-index:100;
-    box-shadow:0 2px 8px rgba(0,0,0,.15);
+h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 8px;
 }
 
-h1{
-    margin:0;
-    font-size:23px;
-}
-
-#progress{
-    margin-top:4px;
-    color:#666;
-    font-size:15px;
-}
-
-#score{
-    margin-top:3px;
-    font-size:16px;
-    font-weight:700;
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
 }
 
 
@@ -69,38 +46,31 @@ h1{
    PLAN
 ========================= */
 
-.plan{
-    position:relative;
-    width:100%;
-    max-width:1250px;
-    margin:auto;
-    background:white;
-    overflow:hidden;
+.plan-container {
+    position: relative;
+    width: 100%;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 12px;
 }
 
-.plan img{
-    display:block;
-    width:100%;
-    height:auto;
+.plan-container img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 
-/* =========================
-   CACHE LA LÉGENDE DE
-   L'IMAGE ORIGINALE
-========================= */
+/* Masque la légende présente sur l'image */
 
-.mask{
-    position:absolute;
-    z-index:5;
-
-    left:0;
-    top:0;
-
-    width:61%;
-    height:42%;
-
-    background:white;
+.mask {
+    position: absolute;
+    left: 38%;
+    top: 4%;
+    width: 61%;
+    height: 42%;
+    background: white;
+    z-index: 2;
 }
 
 
@@ -108,218 +78,146 @@ h1{
    ZONES CLIQUABLES
 ========================= */
 
-.room{
-    position:absolute;
-    z-index:20;
+.room {
+    position: absolute;
 
-    width:52px;
-    height:52px;
+    /*
+       Petites zones autour des numéros
+       déjà présents sur le plan.
+    */
 
-    margin:0;
-    padding:0;
+    width: 4.5%;
+    height: 4.5%;
 
-    border:0;
-    border-radius:50%;
+    transform: translate(-50%, -50%);
 
-    background:transparent;
+    z-index: 5;
 
-    color:transparent;
+    cursor: pointer;
 
-    font-size:0;
+    background: transparent;
 
-    touch-action:manipulation;
+    border: 1px solid rgba(40, 100, 180, 0.30);
+
+    border-radius: 50%;
+
+    padding: 0;
+
+    transition:
+        background 0.15s ease,
+        border 0.15s ease,
+        transform 0.15s ease;
 }
 
 
-/* Petit numéro visible au centre */
+/* Au passage du doigt / curseur */
 
-.room::after{
-    content:attr(data-n);
-
-    position:absolute;
-
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:30px;
-    height:30px;
-
-    border:2px solid #007aff;
-    border-radius:50%;
-
-    background:white;
-
-    color:#007aff;
-
-    font-size:14px;
-    font-weight:800;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    box-shadow:0 1px 4px rgba(0,0,0,.25);
+.room:hover {
+    background: rgba(40, 100, 180, 0.07);
+    border-color: rgba(40, 100, 180, 0.55);
 }
 
-.room.selected::after{
-    background:#007aff;
-    color:white;
+
+/* Pièce sélectionnée */
+
+.room.selected {
+    background: rgba(40, 100, 180, 0.10);
+    border: 2px solid rgba(40, 100, 180, 0.65);
 }
+
+
+/* Bonne réponse */
+
+.room.correct {
+    background: rgba(50, 170, 80, 0.12);
+    border: 2px solid rgba(50, 150, 70, 0.75);
+}
+
+
+/* Mauvaise réponse */
+
+.room.incorrect {
+    background: rgba(200, 50, 50, 0.10);
+    border: 2px solid rgba(200, 50, 50, 0.75);
+}
+
+
+/*
+   IMPORTANT :
+   aucun numéro n'est créé par le CSS.
+   Les numéros imprimés sur le plan
+   restent les seuls numéros visibles.
+*/
 
 
 /* =========================
-   POSITIONS DES PIÈCES
+   POSITIONS DES 19 PIECES
 ========================= */
 
-.r1{left:26%;top:38%}
+.r1  { left: 26%; top: 38%; }
+.r2  { left: 1%;  top: 46%; }
+.r3  { left: 1%;  top: 59%; }
+.r4  { left: 7%;  top: 59%; }
+.r5  { left: 14%; top: 59%; }
+.r6  { left: 20%; top: 59%; }
 
-.r2{left:1%;top:46%}
-
-.r3{left:1%;top:59%}
-
-.r4{left:7%;top:59%}
-
-.r5{left:14%;top:59%}
-
-.r6{left:20%;top:59%}
-
-.r7{left:57%;top:29%}
-
-.r8{left:52%;top:46%}
-
-.r9{left:46%;top:46%}
-
-.r10{left:41%;top:46%}
-
-.r11{left:35%;top:46%}
-
-.r12{left:30%;top:46%}
-
-.r13{left:30%;top:55%}
-
-.r14{left:35%;top:56%}
-
-.r15{left:41%;top:55%}
-
-.r16{left:46%;top:55%}
-
-.r17{left:57%;top:46%}
-
-.r18{left:57%;top:62%}
-
-.r19{left:40%;top:82%}
+.r7  { left: 57%; top: 29%; }
+.r8  { left: 52%; top: 46%; }
+.r9  { left: 46%; top: 46%; }
+.r10 { left: 41%; top: 46%; }
+.r11 { left: 35%; top: 46%; }
+.r12 { left: 30%; top: 46%; }
+.r13 { left: 30%; top: 55%; }
+.r14 { left: 35%; top: 56%; }
+.r15 { left: 41%; top: 55%; }
+.r16 { left: 46%; top: 55%; }
+.r17 { left: 57%; top: 46%; }
+.r18 { left: 57%; top: 62%; }
+.r19 { left: 40%; top: 82%; }
 
 
 /* =========================
-   BOUTON LÉGENDE
+   ZONE QUIZ
 ========================= */
 
-.legend-button-zone{
-    background:white;
-    padding:12px 15px;
+.quiz-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f7f7f7;
+    border-radius: 14px;
+    text-align: center;
 }
 
-#legendButton{
-    width:100%;
-    min-height:48px;
-
-    border:0;
-    border-radius:12px;
-
-    background:#e5e5ea;
-    color:#111;
-
-    font-size:17px;
-    font-weight:700;
-
-    touch-action:manipulation;
+.question {
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-
-/* =========================
-   LÉGENDE
-========================= */
-
-#legend{
-    display:none;
-
-    background:white;
-
-    padding:10px 18px 20px;
+#selectedRoom {
+    color: #2c65a8;
 }
 
-#legend h2{
-    text-align:center;
-    font-size:21px;
-    margin:10px 0 15px;
+input[type="text"] {
+    width: 100%;
+    max-width: 500px;
+    padding: 14px 16px;
+
+    border: 1px solid #bbb;
+    border-radius: 10px;
+
+    font-size: 17px;
+
+    outline: none;
+
+    margin-bottom: 12px;
 }
 
-.legend-item{
-    padding:9px 0;
-    border-bottom:1px solid #ddd;
-    font-size:16px;
-}
+input[type="text"]:focus {
+    border-color: #2c65a8;
 
-
-/* =========================
-   ZONE DE RÉPONSE
-========================= */
-
-.panel{
-    background:white;
-
-    padding:15px;
-
-    position:sticky;
-    bottom:0;
-
-    z-index:80;
-
-    box-shadow:0 -3px 12px rgba(0,0,0,.18);
-}
-
-#question{
-    text-align:center;
-
-    font-size:18px;
-    font-weight:700;
-
-    margin-bottom:10px;
-}
-
-
-/* =========================
-   CHAMP
-========================= */
-
-#answer{
-    display:block;
-
-    width:100%;
-    height:54px;
-
-    padding:0 15px;
-
-    border:2px solid #bbb;
-    border-radius:13px;
-
-    background:white;
-    color:#111;
-
-    font-size:18px;
-
-    -webkit-appearance:none;
-    appearance:none;
-}
-
-#answer:focus{
-    outline:none;
-
-    border-color:#007aff;
-
-    box-shadow:0 0 0 3px rgba(0,122,255,.15);
+    box-shadow:
+        0 0 0 2px rgba(44,101,168,0.12);
 }
 
 
@@ -327,323 +225,610 @@ h1{
    BOUTONS
 ========================= */
 
-.buttons{
-    display:flex;
-    gap:8px;
-    margin-top:10px;
+.buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
 }
 
-.action{
-    flex:1;
+button.action {
+    border: none;
+    border-radius: 10px;
 
-    min-height:48px;
+    padding: 12px 18px;
 
-    border:0;
-    border-radius:12px;
+    font-size: 16px;
 
-    background:#007aff;
-    color:white;
+    cursor: pointer;
 
-    font-size:17px;
-    font-weight:700;
-
-    touch-action:manipulation;
+    background: #2c65a8;
+    color: white;
 }
 
-.secondary{
-    background:#e5e5ea;
-    color:#111;
+button.action:hover {
+    opacity: 0.9;
 }
 
-.action:active{
-    opacity:.7;
+button.action:disabled {
+    opacity: 0.45;
+    cursor: default;
 }
 
-
-/* =========================
-   RÉSULTAT
-========================= */
-
-#result{
-    min-height:25px;
-
-    margin-top:8px;
-
-    text-align:center;
-
-    font-size:16px;
-    font-weight:700;
+button.secondary {
+    background: #777;
 }
 
-.good{
-    color:#16803c;
-}
-
-.bad{
-    color:#d11a2a;
+button.success {
+    background: #3d9150;
 }
 
 
 /* =========================
-   FIN DU QUIZ
+   RESULTAT
 ========================= */
 
-#finish{
-    display:none;
+.result {
+    margin-top: 15px;
 
-    background:white;
+    font-size: 18px;
+    font-weight: bold;
 
-    padding:25px 15px;
-
-    text-align:center;
+    min-height: 25px;
 }
 
-#finish h2{
-    margin-top:0;
+.result.correct-text {
+    color: #29823c;
 }
 
-#finalScore{
-    font-size:34px;
-    font-weight:800;
-    margin:15px;
+.result.incorrect-text {
+    color: #c0392b;
 }
 
 
 /* =========================
-   PETIT ÉCRAN
+   NAVIGATION
 ========================= */
 
-@media(max-width:500px){
+.navigation {
+    display: flex;
 
-    .room{
-        width:48px;
-        height:48px;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+.score {
+    text-align: center;
+
+    margin-top: 18px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   LEGENDE
+========================= */
+
+.legend-button {
+    display: block;
+
+    margin: 15px auto 0 auto;
+
+    border: none;
+
+    background: #444;
+
+    color: white;
+
+    padding: 10px 18px;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+.legend {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 15px;
+
+    background: #f4f4f4;
+
+    border-radius: 12px;
+}
+
+.legend.visible {
+    display: block;
+}
+
+.legend h2 {
+    margin-top: 0;
+
+    text-align: center;
+
+    font-size: 19px;
+}
+
+.legend-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 7px;
+}
+
+.legend-item {
+    padding: 7px 10px;
+
+    background: white;
+
+    border-radius: 7px;
+
+    border: 1px solid #ddd;
+}
+
+.legend-number {
+    font-weight: bold;
+
+    color: #2c65a8;
+}
+
+
+/* =========================
+   ECRAN FINAL
+========================= */
+
+.final {
+    display: none;
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    padding: 25px;
+
+    background: #f5f5f5;
+
+    border-radius: 14px;
+}
+
+.final h2 {
+    margin-top: 0;
+
+    font-size: 26px;
+}
+
+.final-score {
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin: 15px 0;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 8px;
     }
 
-    .room::after{
-        width:28px;
-        height:28px;
-        font-size:13px;
+    .container {
+        padding: 12px;
+
+        border-radius: 12px;
     }
 
-    #question{
-        font-size:17px;
+    h1 {
+        font-size: 24px;
     }
 
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .question {
+        font-size: 18px;
+    }
+
+    input[type="text"] {
+        font-size: 16px;
+    }
+
+    /*
+       Sur téléphone/tablette,
+       on garde une zone assez facile
+       à toucher sans afficher de pastille.
+    */
+
+    .room {
+        width: 5.5%;
+        height: 5.5%;
+
+        border-width: 1px;
+    }
+
+    .legend-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .navigation {
+        flex-direction: column;
+    }
+
+    .navigation button {
+        width: 100%;
+    }
 }
 
 </style>
-
 </head>
 
 
 <body>
 
-
-<!-- =========================
-     HEADER
-========================= -->
-
-<header>
+<div class="container">
 
 <h1>🏛️ Quiz des pièces</h1>
 
-<div id="progress">
-Choisis un numéro sur le plan
+<div class="subtitle">
+Clique sur un numéro du plan et indique le nom de la pièce.
 </div>
-
-<div id="score">
-Score : 0 / 19
-</div>
-
-</header>
 
 
 <!-- =========================
      PLAN
 ========================= -->
 
-<div class="plan">
+<div class="plan-container">
 
 <img
-src="66C6A94C-68C9-4690-91A1-472030294E35.png"
-alt="Plan des pièces"
+    src="66C6A94C-68C9-4690-91A1-472030294E35.png"
+    alt="Plan des pièces"
 >
+
+<!-- Masque de la légende originale -->
 
 <div class="mask"></div>
 
 
-<button class="room r1" data-n="1"></button>
-<button class="room r2" data-n="2"></button>
-<button class="room r3" data-n="3"></button>
-<button class="room r4" data-n="4"></button>
-<button class="room r5" data-n="5"></button>
-<button class="room r6" data-n="6"></button>
-<button class="room r7" data-n="7"></button>
-<button class="room r8" data-n="8"></button>
-<button class="room r9" data-n="9"></button>
-<button class="room r10" data-n="10"></button>
-<button class="room r11" data-n="11"></button>
-<button class="room r12" data-n="12"></button>
-<button class="room r13" data-n="13"></button>
-<button class="room r14" data-n="14"></button>
-<button class="room r15" data-n="15"></button>
-<button class="room r16" data-n="16"></button>
-<button class="room r17" data-n="17"></button>
-<button class="room r18" data-n="18"></button>
-<button class="room r19" data-n="19"></button>
-
-</div>
-
-
 <!-- =========================
-     LÉGENDE
+     19 ZONES CLIQUABLES
 ========================= -->
 
-<div class="legend-button-zone">
+<button
+    class="room r1"
+    onclick="selectRoom(1)"
+    aria-label="Pièce 1">
+</button>
 
-<button id="legendButton">
+<button
+    class="room r2"
+    onclick="selectRoom(2)"
+    aria-label="Pièce 2">
+</button>
 
-👁️ Voir la légende
+<button
+    class="room r3"
+    onclick="selectRoom(3)"
+    aria-label="Pièce 3">
+</button>
 
+<button
+    class="room r4"
+    onclick="selectRoom(4)"
+    aria-label="Pièce 4">
+</button>
+
+<button
+    class="room r5"
+    onclick="selectRoom(5)"
+    aria-label="Pièce 5">
+</button>
+
+<button
+    class="room r6"
+    onclick="selectRoom(6)"
+    aria-label="Pièce 6">
+</button>
+
+<button
+    class="room r7"
+    onclick="selectRoom(7)"
+    aria-label="Pièce 7">
+</button>
+
+<button
+    class="room r8"
+    onclick="selectRoom(8)"
+    aria-label="Pièce 8">
+</button>
+
+<button
+    class="room r9"
+    onclick="selectRoom(9)"
+    aria-label="Pièce 9">
+</button>
+
+<button
+    class="room r10"
+    onclick="selectRoom(10)"
+    aria-label="Pièce 10">
+</button>
+
+<button
+    class="room r11"
+    onclick="selectRoom(11)"
+    aria-label="Pièce 11">
+</button>
+
+<button
+    class="room r12"
+    onclick="selectRoom(12)"
+    aria-label="Pièce 12">
+</button>
+
+<button
+    class="room r13"
+    onclick="selectRoom(13)"
+    aria-label="Pièce 13">
+</button>
+
+<button
+    class="room r14"
+    onclick="selectRoom(14)"
+    aria-label="Pièce 14">
+</button>
+
+<button
+    class="room r15"
+    onclick="selectRoom(15)"
+    aria-label="Pièce 15">
+</button>
+
+<button
+    class="room r16"
+    onclick="selectRoom(16)"
+    aria-label="Pièce 16">
+</button>
+
+<button
+    class="room r17"
+    onclick="selectRoom(17)"
+    aria-label="Pièce 17">
+</button>
+
+<button
+    class="room r18"
+    onclick="selectRoom(18)"
+    aria-label="Pièce 18">
+</button>
+
+<button
+    class="room r19"
+    onclick="selectRoom(19)"
+    aria-label="Pièce 19">
 </button>
 
 </div>
 
 
-<div id="legend">
+<!-- =========================
+     LEGENDE
+========================= -->
 
-<h2>📋 Légende des pièces</h2>
+<button
+    class="legend-button"
+    onclick="toggleLegend()">
+
+👁️ Voir la légende
+
+</button>
+
+
+<div
+    id="legend"
+    class="legend">
+
+<h2>Correspondance des pièces</h2>
+
+<div class="legend-grid">
 
 <div class="legend-item">
-<b>1.</b> Terrasse
+<span class="legend-number">1.</span>
+Terrasse
 </div>
 
 <div class="legend-item">
-<b>2.</b> Salon d’argent
+<span class="legend-number">2.</span>
+Salon d’argent
 </div>
 
 <div class="legend-item">
-<b>3.</b> Salle à manger
+<span class="legend-number">3.</span>
+Salle à manger
 </div>
 
 <div class="legend-item">
-<b>4.</b> Bibliothèque
+<span class="legend-number">4.</span>
+Bibliothèque
 </div>
 
 <div class="legend-item">
-<b>5.</b> Salon des fougères
+<span class="legend-number">5.</span>
+Salon des fougères
 </div>
 
 <div class="legend-item">
-<b>6.</b> Salon de la cartographie
+<span class="legend-number">6.</span>
+Salon de la cartographie
 </div>
 
 <div class="legend-item">
-<b>7.</b> Salle des fêtes
+<span class="legend-number">7.</span>
+Salle des fêtes
 </div>
 
 <div class="legend-item">
-<b>8.</b> Salon Murat
+<span class="legend-number">8.</span>
+Salon Murat
 </div>
 
 <div class="legend-item">
-<b>9.</b> Salon des aides de camp
+<span class="legend-number">9.</span>
+Salon des aides de camp
 </div>
 
 <div class="legend-item">
-<b>10.</b> Salon des ambassadeurs
+<span class="legend-number">10.</span>
+Salon des ambassadeurs
 </div>
 
 <div class="legend-item">
-<b>11.</b> Salon Pompadour
+<span class="legend-number">11.</span>
+Salon Pompadour
 </div>
 
 <div class="legend-item">
-<b>12.</b> Salon des portraits
+<span class="legend-number">12.</span>
+Salon des portraits
 </div>
 
 <div class="legend-item">
-<b>13.</b> Salon Cléopâtre
+<span class="legend-number">13.</span>
+Salon Cléopâtre
 </div>
 
 <div class="legend-item">
-<b>14.</b> Escalier Murat
+<span class="legend-number">14.</span>
+Escalier Murat
 </div>
 
 <div class="legend-item">
-<b>15.</b> Vestibule d’honneur
+<span class="legend-number">15.</span>
+Vestibule d’honneur
 </div>
 
 <div class="legend-item">
-<b>16.</b> Salon des tapisseries
+<span class="legend-number">16.</span>
+Salon des tapisseries
 </div>
 
 <div class="legend-item">
-<b>17.</b> Jardin d’hiver
+<span class="legend-number">17.</span>
+Jardin d’hiver
 </div>
 
 <div class="legend-item">
-<b>18.</b> Salon Napoléon III
+<span class="legend-number">18.</span>
+Salon Napoléon III
 </div>
 
 <div class="legend-item">
-<b>19.</b> Cour d’honneur
+<span class="legend-number">19.</span>
+Cour d’honneur
 </div>
 
+</div>
 </div>
 
 
 <!-- =========================
-     RÉPONSE
+     QUIZ
 ========================= -->
 
-<div class="panel">
+<div class="quiz-box">
 
-<div id="question">
-👆 Sélectionne une pièce
+<div class="question">
+Sélectionne une pièce sur le plan
 </div>
 
+<div id="selectedRoom">
+Aucune pièce sélectionnée
+</div>
+
+<br>
 
 <input
-id="answer"
-type="text"
-placeholder="Écris le nom de la pièce"
-autocomplete="off"
-autocorrect="off"
-autocapitalize="sentences"
-spellcheck="false"
-enterkeyhint="done"
+    id="answer"
+    type="text"
+    placeholder="Écris le nom de la pièce"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="sentences"
+    spellcheck="false"
+    enterkeyhint="done"
 >
 
 
 <div class="buttons">
 
 <button
-class="action secondary"
-id="prev"
-type="button">
-←
-</button>
+    class="action success"
+    onclick="checkAnswer()">
 
-<button
-class="action"
-id="check"
-type="button">
-Vérifier
-</button>
+✓ Vérifier
 
-<button
-class="action secondary"
-id="next"
-type="button">
-→
 </button>
 
 </div>
 
 
-<div id="result"></div>
+<div
+    id="result"
+    class="result">
+</div>
+
+
+<div class="navigation">
+
+<button
+    class="action secondary"
+    onclick="previousRoom()">
+
+← Précédente
+
+</button>
+
+
+<button
+    class="action"
+    onclick="nextRoom()">
+
+Suivante →
+
+</button>
+
+</div>
+
+
+<div class="score">
+
+Score :
+<span id="score">0</span>
+ / 19
+
+</div>
 
 </div>
 
@@ -652,69 +837,82 @@ type="button">
      FIN
 ========================= -->
 
-<div id="finish">
+<div
+    id="final"
+    class="final">
 
 <h2>🎉 Quiz terminé !</h2>
 
-<div id="finalScore">
-0 / 19
+<div class="final-score">
+
+<span id="finalScore">0</span>
+ / 19
+
 </div>
 
+<div id="finalMessage"></div>
+
+<br>
+
 <button
-class="action"
-id="restart"
-type="button">
-Recommencer
+    class="action"
+    onclick="restartQuiz()">
+
+🔄 Recommencer
+
 </button>
+
+</div>
 
 </div>
 
 
 <script>
 
+
 /* =========================
-   RÉPONSES
+   DONNEES
 ========================= */
 
-const rooms={
+const rooms = {
 
-1:"Terrasse",
+1: "Terrasse",
 
-2:"Salon d’argent",
+2: "Salon d’argent",
 
-3:"Salle à manger",
+3: "Salle à manger",
 
-4:"Bibliothèque",
+4: "Bibliothèque",
 
-5:"Salon des fougères",
+5: "Salon des fougères",
 
-6:"Salon de la cartographie",
+6: "Salon de la cartographie",
 
-7:"Salle des fêtes",
+7: "Salle des fêtes",
 
-8:"Salon Murat",
+8: "Salon Murat",
 
-9:"Salon des aides de camp",
+9: "Salon des aides de camp",
 
-10:"Salon des ambassadeurs",
+10: "Salon des ambassadeurs",
 
-11:"Salon Pompadour",
+11: "Salon Pompadour",
 
-12:"Salon des portraits",
+12: "Salon des portraits",
 
-13:"Salon Cléopâtre",
+13: "Salon Cléopâtre",
 
-14:"Escalier Murat",
+14: "Escalier Murat",
 
-15:"Vestibule d’honneur",
+15: "Vestibule d’honneur",
 
-16:"Salon des tapisseries",
+16: "Salon des tapisseries",
 
-17:"Jardin d’hiver",
+17: "Jardin d’hiver",
 
-18:"Salon Napoléon III",
+18: "Salon Napoléon III",
 
-19:"Cour d’honneur"
+19: "Cour d’honneur"
 
 };
 
@@ -723,186 +921,239 @@ const rooms={
    VARIABLES
 ========================= */
 
-let current=null;
+let currentRoom = null;
 
-let score=0;
+let score = 0;
 
-let answered={};
-
-
-/* =========================
-   ÉLÉMENTS
-========================= */
-
-const input=document.getElementById("answer");
-
-const question=document.getElementById("question");
-
-const result=document.getElementById("result");
-
-const progress=document.getElementById("progress");
-
-const scoreText=document.getElementById("score");
+let answered = {};
 
 
 /* =========================
    NORMALISATION
 ========================= */
 
-function clean(text){
+function normalize(text) {
 
 return text
 .toLowerCase()
 .normalize("NFD")
-.replace(/[\u0300-\u036f]/g,"")
-.replace(/[’']/g,"'")
-.replace(/\s+/g," ")
+.replace(/[\u0300-\u036f]/g, "")
+.replace(/[’']/g, " ")
+.replace(/\s+/g, " ")
 .trim();
 
 }
 
 
 /* =========================
-   CHOISIR UNE PIÈCE
+   SELECTION
 ========================= */
 
-function selectRoom(number){
+function selectRoom(number) {
 
-current=Number(number);
+currentRoom = number;
 
 
-/* retirer sélection */
+/* Retire la sélection précédente */
 
-document.querySelectorAll(".room")
-.forEach(button=>{
+document
+.querySelectorAll(".room")
+.forEach(room => {
 
-button.classList.remove("selected");
+room.classList.remove("selected");
 
 });
 
 
-/* sélectionner */
+/* Sélectionne la nouvelle zone */
 
-const selected=document.querySelector(
-'.room[data-n="'+current+'"]'
-);
+const selected =
+document.querySelector(".r" + number);
 
-if(selected){
+if (selected) {
 
 selected.classList.add("selected");
 
 }
 
 
-/* question */
+/* Affichage */
 
-question.textContent=
-"Quel est le nom de la pièce n°"+current+" ?";
+document.getElementById(
+"selectedRoom"
+).innerHTML =
+"Pièce sélectionnée : <strong>" +
+number +
+"</strong>";
 
 
-progress.textContent=
-"Pièce "+current+" / 19";
+/* Champ réponse */
 
+const input =
+document.getElementById("answer");
 
-/* nettoyage */
+input.value = "";
 
-input.value="";
+document.getElementById(
+"result"
+).innerHTML = "";
 
-result.textContent="";
-
-result.className="";
+document.getElementById(
+"result"
+).className = "result";
 
 
 /*
-   On place le curseur dans le champ.
-   Sur iPhone, si le clavier ne s'ouvre
-   pas automatiquement, touche simplement
-   le champ.
+   Donne directement le focus
+   au champ sur iPhone.
 */
 
 input.focus();
 
-
-/*
-   On fait descendre légèrement l'écran
-   pour que le champ soit bien visible.
-*/
-
-setTimeout(()=>{
-
-input.scrollIntoView({
-behavior:"smooth",
-block:"center"
-});
-
-},50);
-
 }
 
 
 /* =========================
-   VÉRIFIER
+   VERIFICATION
 ========================= */
 
-function check(){
+function checkAnswer() {
 
-if(current===null){
+if (currentRoom === null) {
 
-result.textContent=
-"👆 Sélectionne d'abord un numéro.";
+document.getElementById(
+"result"
+).innerHTML =
+"⚠️ Sélectionne d’abord une pièce.";
 
-result.className="bad";
+document.getElementById(
+"result"
+).className =
+"result incorrect-text";
 
 return;
 
 }
 
 
-const user=clean(input.value);
+const input =
+document.getElementById("answer").value;
 
-const answer=clean(rooms[current]);
+const userAnswer =
+normalize(input);
+
+const correctAnswer =
+normalize(rooms[currentRoom]);
+
+const selected =
+document.querySelector(".r" + currentRoom);
 
 
-if(user===answer){
+/*
+   Si la réponse est correcte
+*/
 
-if(!answered[current]){
+if (userAnswer === correctAnswer) {
 
-answered[current]=true;
+if (!answered[currentRoom]) {
 
 score++;
 
+answered[currentRoom] = true;
+
 }
 
-result.textContent=
+selected.classList.remove(
+"selected",
+"incorrect"
+);
+
+selected.classList.add("correct");
+
+
+document.getElementById(
+"result"
+).innerHTML =
 "✅ Bonne réponse !";
 
-result.className="good";
-
-}
-
-else{
-
-result.textContent=
-"❌ Mauvaise réponse";
-
-result.className="bad";
+document.getElementById(
+"result"
+).className =
+"result correct-text";
 
 }
 
 
-scoreText.textContent=
-"Score : "+score+" / 19";
+/*
+   Si la réponse est incorrecte
+*/
+
+else {
+
+selected.classList.remove(
+"selected",
+"correct"
+);
+
+selected.classList.add(
+"incorrect"
+);
+
+
+document.getElementById(
+"result"
+).innerHTML =
+"❌ Mauvaise réponse. Réponse attendue : " +
+rooms[currentRoom];
+
+document.getElementById(
+"result"
+).className =
+"result incorrect-text";
+
+}
+
+
+updateScore();
+
+
+/*
+   Fin du quiz
+*/
+
+if (Object.keys(answered).length === 19) {
+
+setTimeout(
+finishQuiz,
+700
+);
+
+}
 
 }
 
 
 /* =========================
-   SUIVANT
+   SCORE
 ========================= */
 
-function nextRoom(){
+function updateScore() {
 
-if(current===null){
+document.getElementById(
+"score"
+).textContent =
+score;
+
+}
+
+
+/* =========================
+   SUIVANTE
+========================= */
+
+function nextRoom() {
+
+if (currentRoom === null) {
 
 selectRoom(1);
 
@@ -911,28 +1162,29 @@ return;
 }
 
 
-if(current<19){
+let next =
+currentRoom + 1;
 
-selectRoom(current+1);
 
-}
+if (next > 19) {
 
-else{
-
-finishQuiz();
+next = 1;
 
 }
+
+
+selectRoom(next);
 
 }
 
 
 /* =========================
-   PRÉCÉDENT
+   PRECEDENTE
 ========================= */
 
-function previousRoom(){
+function previousRoom() {
 
-if(current===null){
+if (currentRoom === null) {
 
 selectRoom(1);
 
@@ -941,9 +1193,77 @@ return;
 }
 
 
-if(current>1){
+let previous =
+currentRoom - 1;
 
-selectRoom(current-1);
+
+if (previous < 1) {
+
+previous = 19;
+
+}
+
+
+selectRoom(previous);
+
+}
+
+
+/* =========================
+   TOUCHE ENTREE
+========================= */
+
+document
+.getElementById("answer")
+.addEventListener(
+"keydown",
+function(event) {
+
+if (event.key === "Enter") {
+
+event.preventDefault();
+
+checkAnswer();
+
+}
+
+}
+);
+
+
+/* =========================
+   LEGENDE
+========================= */
+
+function toggleLegend() {
+
+const legend =
+document.getElementById("legend");
+
+legend.classList.toggle(
+"visible"
+);
+
+
+const button =
+document.querySelector(
+".legend-button"
+);
+
+
+if (
+legend.classList.contains("visible")
+) {
+
+button.textContent =
+"🙈 Masquer la légende";
+
+}
+
+else {
+
+button.textContent =
+"👁️ Voir la légende";
 
 }
 
@@ -954,23 +1274,74 @@ selectRoom(current-1);
    FIN
 ========================= */
 
-function finishQuiz(){
+function finishQuiz() {
 
-document.getElementById("finish")
-.style.display="block";
-
-
-document.getElementById("finalScore")
-.textContent=
-score+" / 19";
+document.querySelector(
+".quiz-box"
+).style.display =
+"none";
 
 
-document.getElementById("finish")
-.scrollIntoView({
+document.querySelector(
+".legend-button"
+).style.display =
+"none";
 
-behavior:"smooth"
 
-});
+document.getElementById(
+"legend"
+).style.display =
+"none";
+
+
+document.getElementById(
+"final"
+).style.display =
+"block";
+
+
+document.getElementById(
+"finalScore"
+).textContent =
+score;
+
+
+let message;
+
+
+if (score === 19) {
+
+message =
+"🏆 Excellent ! Toutes les réponses sont correctes.";
+
+}
+
+else if (score >= 15) {
+
+message =
+"👏 Très bon résultat !";
+
+}
+
+else if (score >= 10) {
+
+message =
+"👍 Pas mal ! Tu peux encore progresser.";
+
+}
+
+else {
+
+message =
+"💪 Continue à t’entraîner !";
+
+}
+
+
+document.getElementById(
+"finalMessage"
+).textContent =
+message;
 
 }
 
@@ -979,137 +1350,79 @@ behavior:"smooth"
    RECOMMENCER
 ========================= */
 
-function restart(){
+function restartQuiz() {
 
-current=null;
+score = 0;
 
-score=0;
+currentRoom = null;
 
-answered={};
-
-
-input.value="";
-
-result.textContent="";
-
-result.className="";
+answered = {};
 
 
-question.textContent=
-"👆 Sélectionne une pièce";
+document
+.querySelectorAll(".room")
+.forEach(room => {
 
-
-progress.textContent=
-"Choisis un numéro sur le plan";
-
-
-scoreText.textContent=
-"Score : 0 / 19";
-
-
-document.querySelectorAll(".room")
-.forEach(button=>{
-
-button.classList.remove("selected");
+room.classList.remove(
+"selected",
+"correct",
+"incorrect"
+);
 
 });
 
 
-document.getElementById("finish")
-.style.display="none";
+document.getElementById(
+"score"
+).textContent =
+"0";
 
 
-window.scrollTo({
+document.getElementById(
+"selectedRoom"
+).innerHTML =
+"Aucune pièce sélectionnée";
 
-top:0,
 
-behavior:"smooth"
+document.getElementById(
+"answer"
+).value =
+"";
 
-});
+
+document.getElementById(
+"result"
+).innerHTML =
+"";
+
+
+document.getElementById(
+"result"
+).className =
+"result";
+
+
+document.querySelector(
+".quiz-box"
+).style.display =
+"block";
+
+
+document.querySelector(
+".legend-button"
+).style.display =
+"block";
+
+
+document.getElementById(
+"final"
+).style.display =
+"none";
 
 }
 
 
-/* =========================
-   NUMÉROS
-========================= */
-
-document.querySelectorAll(".room")
-.forEach(button=>{
-
-button.addEventListener("click",function(){
-
-selectRoom(this.dataset.n);
-
-});
-
-});
-
-
-/* =========================
-   BOUTONS
-========================= */
-
-document.getElementById("check")
-.addEventListener("click",check);
-
-
-document.getElementById("next")
-.addEventListener("click",nextRoom);
-
-
-document.getElementById("prev")
-.addEventListener("click",previousRoom);
-
-
-document.getElementById("restart")
-.addEventListener("click",restart);
-
-
-/* =========================
-   CLAVIER
-========================= */
-
-input.addEventListener("keydown",function(event){
-
-if(event.key==="Enter"){
-
-event.preventDefault();
-
-check();
-
-}
-
-});
-
-
-/* =========================
-   LÉGENDE
-========================= */
-
-document.getElementById("legendButton")
-.addEventListener("click",function(){
-
-const legend=document.getElementById("legend");
-
-
-if(legend.style.display==="block"){
-
-legend.style.display="none";
-
-this.textContent="👁️ Voir la légende";
-
-}
-
-else{
-
-legend.style.display="block";
-
-this.textContent="🙈 Cacher la légende";
-
-}
-
-});
+updateScore();
 
 </script>
 
